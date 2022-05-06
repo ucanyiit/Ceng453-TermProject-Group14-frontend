@@ -7,4 +7,6 @@ module ceng453.frontend.frontend {
 
     opens ceng453.frontend.frontend to javafx.fxml;
     exports ceng453.frontend.frontend;
+    exports ceng453.frontend.frontend.controllers;
+    opens ceng453.frontend.frontend.controllers to javafx.fxml;
 }
