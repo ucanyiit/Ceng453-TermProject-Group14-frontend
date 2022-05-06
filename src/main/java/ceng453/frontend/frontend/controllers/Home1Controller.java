@@ -14,7 +14,6 @@ import java.util.Objects;
 
 public class Home1Controller {
 
-    @FXML
     private Stage stage;
 
     public void switchToLogin(ActionEvent event) throws IOException {

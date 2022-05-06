@@ -14,9 +14,7 @@ import java.util.Objects;
 
 public class RegisterController {
 
-    @FXML
     private Stage stage;
-    private Scene scene;
 
     public void switchToHome1(ActionEvent event) throws IOException {
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
