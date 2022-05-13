@@ -11,15 +11,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class LeaderboardController {
@@ -33,25 +37,19 @@ public class LeaderboardController {
     private void setLeaderboardList(int day) {
         leaderboardList.getItems().clear();
 
-        JSONObject jsonObject = new JSONObject();
-        DateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
-        String startDate = dateFormat.format(new Date());
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String endDate = dateFormat.format(new Date());
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -day);
         Date tmpDate = cal.getTime();
-        String endDate = dateFormat.format(tmpDate);
+        String startDate = dateFormat.format(tmpDate);
+        List<NameValuePair> params = List.of(
+                new BasicNameValuePair("startDate", startDate),
+                new BasicNameValuePair("endDate", endDate)
+        );
 
         try {
-            jsonObject.put("startDate", startDate);
-            jsonObject.put("endDate", endDate);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            timeLabel.setText("Error: " + e.getMessage());
-            return;
-        }
-
-        try {
-            JSONObject obj = RequestHandler.getRequestHandler().postRequest(jsonObject, "leaderboard");
+            JSONObject obj = RequestHandler.getRequestHandler().getRequest(params, "leaderboard");
             boolean status = obj.getBoolean("status");
 
             if (status) {
@@ -63,7 +61,7 @@ public class LeaderboardController {
                 String message = obj.getString("message");
                 timeLabel.setText(message);
             }
-        } catch (JSONException | IOException e) {
+        } catch (JSONException | IOException | URISyntaxException e) {
             e.printStackTrace();
             timeLabel.setText("Failed to fetch scores.");
         }
@@ -88,6 +86,6 @@ public class LeaderboardController {
 
     public void setAllTimes(ActionEvent event) throws IOException {
         timeLabel.setText("All Times");
-        setLeaderboardList(1000000);
+        setLeaderboardList(100000);
     }
 }
