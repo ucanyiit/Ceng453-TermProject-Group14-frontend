@@ -1,6 +1,7 @@
 package ceng453.frontend.frontend.controllers;
 
 import ceng453.frontend.frontend.utils.StageUtils;
+import org.json.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +11,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -41,11 +48,43 @@ public class LoginController {
     public void login(ActionEvent event) throws IOException {
         String username = usernameField.getText();
         String password = passwordField.getText();
-        if (username.equals("admin") && password.equals("admin")) {
-            switchToHome2(event);
+
+        String url = "http://localhost:8080/api/auth/login";
+        HttpPost post = new HttpPost(url);
+        post.addHeader("content-type", "application/json");
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("username", username);
+            jsonObject.put("password", password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            errorLabel.setText("Error: " + e.getMessage());
+            return;
         }
-        else {
-            errorLabel.setText("Invalid username or password");
+
+        // send a JSON data
+        post.setEntity(new StringEntity(jsonObject.toString()));
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(post)) {
+
+            String result = EntityUtils.toString(response.getEntity());
+            System.out.println(result);
+            JSONObject obj = new JSONObject(result);
+            boolean status = obj.getBoolean("status");
+
+            if (status) {
+                switchToHome2(event);
+                String token = obj.getString("message");
+                // save the token to the local storage
+            } else {
+                String message = obj.getString("message");
+                errorLabel.setText(message);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            errorLabel.setText("Failed to log in.");
         }
     }
 }

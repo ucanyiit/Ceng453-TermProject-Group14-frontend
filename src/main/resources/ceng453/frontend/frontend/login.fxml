@@ -13,9 +13,9 @@
       <VBox alignment="CENTER" fillWidth="false" spacing="12" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Label styleClass="form-label" text="Username" />
-            <PasswordField fx:id="usernameField" styleClass="form-control" />
+            <TextField fx:id="usernameField" styleClass="form-control" />
             <Label styleClass="form-label" text="Password" />
-            <TextField fx:id="passwordField" styleClass="form-control" />
+            <PasswordField fx:id="passwordField" styleClass="form-control" />
             <Label fx:id="errorLabel" styleClass="form-label" textFill="RED" />
             <Button layoutX="276.0" layoutY="298.0" mnemonicParsing="false" onAction="#login" text="Login">
                <styleClass>
