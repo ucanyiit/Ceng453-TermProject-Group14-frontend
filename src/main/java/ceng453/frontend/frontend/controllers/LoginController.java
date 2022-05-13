@@ -1,5 +1,6 @@
 package ceng453.frontend.frontend.controllers;
 
+import ceng453.frontend.frontend.utils.RequestHandler;
 import ceng453.frontend.frontend.utils.StageUtils;
 import org.json.*;
 import javafx.event.ActionEvent;
@@ -11,12 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -49,10 +44,6 @@ public class LoginController {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        String url = "http://localhost:8080/api/auth/login";
-        HttpPost post = new HttpPost(url);
-        post.addHeader("content-type", "application/json");
-
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("username", username);
@@ -63,21 +54,14 @@ public class LoginController {
             return;
         }
 
-        // send a JSON data
-        post.setEntity(new StringEntity(jsonObject.toString()));
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault();
-             CloseableHttpResponse response = httpClient.execute(post)) {
-
-            String result = EntityUtils.toString(response.getEntity());
-            System.out.println(result);
-            JSONObject obj = new JSONObject(result);
+        try {
+            JSONObject obj = RequestHandler.getRequestHandler().postRequest(jsonObject, "auth/login");
             boolean status = obj.getBoolean("status");
 
             if (status) {
-                switchToHome2(event);
                 String token = obj.getString("message");
-                // save the token to the local storage
+                RequestHandler.getRequestHandler().setToken(token);
+                switchToHome2(event);
             } else {
                 String message = obj.getString("message");
                 errorLabel.setText(message);
