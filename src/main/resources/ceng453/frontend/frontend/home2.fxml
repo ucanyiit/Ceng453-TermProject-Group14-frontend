@@ -6,10 +6,34 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button layoutX="280.0" layoutY="227.0" mnemonicParsing="false" text="Play">
+      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Play">
          <styleClass>
             <String fx:value="btn" />
             <String fx:value="btn-primary" />
          </styleClass></Button>
+      <Button layoutX="14.0" layoutY="47.0" mnemonicParsing="false" text="Leaderboard">
+         <styleClass>
+            <String fx:value="btn" />
+            <String fx:value="btn-primary" />
+         </styleClass>
+      </Button>
+      <Button layoutX="14.0" layoutY="83.0" mnemonicParsing="false" text="Instructions">
+         <styleClass>
+            <String fx:value="btn" />
+            <String fx:value="btn-primary" />
+         </styleClass>
+      </Button>
+      <Button layoutX="14.0" layoutY="158.0" mnemonicParsing="false" text="Logout">
+         <styleClass>
+            <String fx:value="btn" />
+            <String fx:value="btn-primary" />
+         </styleClass>
+      </Button>
+      <Button layoutX="14.0" layoutY="119.0" mnemonicParsing="false" text="Account Details">
+         <styleClass>
+            <String fx:value="btn" />
+            <String fx:value="btn-primary" />
+         </styleClass>
+      </Button>
    </children>
 </AnchorPane>

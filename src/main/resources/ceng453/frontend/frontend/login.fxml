@@ -6,18 +6,23 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ceng453.frontend.frontend.controllers.LoginController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="600.0" styleClass="panel-primary" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ceng453.frontend.frontend.controllers.LoginController">
    <children>
-      <Button layoutX="276.0" layoutY="298.0" mnemonicParsing="false" text="Login">
-         <styleClass>
-            <String fx:value="btn" />
-            <String fx:value="btn-primary" />
-         </styleClass></Button>
-      <PasswordField layoutX="220.0" layoutY="255.0" styleClass="form-control" />
-      <Label layoutX="220.0" layoutY="232.0" styleClass="form-label" text="Password" />
-      <TextField layoutX="220.0" layoutY="197.0" styleClass="form-control" />
-      <Label layoutX="220.0" layoutY="174.0" styleClass="form-label" text="Username" />
-      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#switchToHome1" styleClass="btn" text="Main Menu" />
+      <VBox alignment="CENTER" fillWidth="false" spacing="12" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label styleClass="form-label" text="Username" />
+            <PasswordField styleClass="form-control" />
+            <Label styleClass="form-label" text="Password" />
+            <TextField styleClass="form-control" />
+            <Button layoutX="276.0" layoutY="298.0" mnemonicParsing="false" text="Login">
+               <styleClass>
+                  <String fx:value="btn" />
+                  <String fx:value="btn-primary" />
+               </styleClass></Button>
+         </children>
+      </VBox>
+      <Button mnemonicParsing="false" onAction="#switchToHome1" styleClass="btn" text="Main Menu" />
    </children>
 </AnchorPane>
