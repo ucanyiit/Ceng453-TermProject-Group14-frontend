@@ -81,7 +81,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>ceng453.frontend.frontend/ceng453.frontend.frontend.HelloApplication</mainClass>
+                            <mainClass>ceng453.frontend/ceng453.frontend.HelloApplication</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

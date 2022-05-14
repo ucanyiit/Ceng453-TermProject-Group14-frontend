@@ -1,4 +1,4 @@
-package ceng453.frontend.frontend;
+package ceng453.frontend;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

@@ -1,4 +1,4 @@
-package ceng453.frontend.frontend.utils;
+package ceng453.frontend.utils;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;

@@ -1,7 +1,7 @@
-package ceng453.frontend.frontend.controllers;
+package ceng453.frontend.controllers;
 
-import ceng453.frontend.frontend.utils.RequestHandler;
-import ceng453.frontend.frontend.utils.StageUtils;
+import ceng453.frontend.utils.RequestHandler;
+import ceng453.frontend.utils.StageUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -69,7 +69,7 @@ public class LeaderboardController {
 
     public void switchToHome2(ActionEvent event) throws IOException {
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/frontend/home2.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/home2.fxml")));
         stage = StageUtils.modifyStage(stage, new Scene(root));
         stage.show();
     }

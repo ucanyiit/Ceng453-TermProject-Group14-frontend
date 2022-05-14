@@ -1,7 +1,7 @@
-package ceng453.frontend.frontend.controllers;
+package ceng453.frontend.controllers;
 
-import ceng453.frontend.frontend.utils.RequestHandler;
-import ceng453.frontend.frontend.utils.StageUtils;
+import ceng453.frontend.utils.RequestHandler;
+import ceng453.frontend.utils.StageUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -19,14 +19,14 @@ public class Home2Controller {
     public void logout(ActionEvent event) throws IOException {
         RequestHandler.getRequestHandler().setToken("");
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/frontend/home1.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/home1.fxml")));
         stage = StageUtils.modifyStage(stage, new Scene(root));
         stage.show();
     }
 
     public void switchToLeaderboard(ActionEvent event) throws IOException {
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/frontend/leaderboard.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/leaderboard.fxml")));
         stage = StageUtils.modifyStage(stage, new Scene(root));
         stage.show();
     }

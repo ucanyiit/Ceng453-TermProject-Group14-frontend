@@ -1,4 +1,4 @@
-package ceng453.frontend.frontend.utils;
+package ceng453.frontend.utils;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
