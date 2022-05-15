@@ -5,6 +5,7 @@ import ceng453.frontend.utils.StageUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,20 +20,24 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-public class LeaderboardController {
+public class LeaderboardController implements Initializable {
 
     private Stage stage;
     @FXML
     private ListView<String> leaderboardList;
     @FXML
     private Label timeLabel;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        setLeaderboardList(7);
+        timeLabel.setText("Week");
+    }
 
     /** Fetches the scores with given day and sets the leaderboard.
      *

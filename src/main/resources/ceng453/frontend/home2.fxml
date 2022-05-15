@@ -14,7 +14,7 @@
                   <String fx:value="btn" />
                   <String fx:value="btn-primary" />
                </styleClass></Button>
-            <Button mnemonicParsing="false" text="Instructions">
+            <Button mnemonicParsing="false" onAction="#switchToInstructions" text="Instructions">
                <styleClass>
                   <String fx:value="btn" />
                   <String fx:value="btn-primary" />
