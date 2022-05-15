@@ -26,6 +26,11 @@ public class LoginController {
     @FXML
     private Label errorLabel;
 
+    /** This method is called when the "Main Menu" button is clicked. It switches to the home1 page.
+     *
+     * @param event The event that is triggered when the "Main Menu" button is clicked.
+     * @throws IOException Throws an IOException if the FXML file cannot be found.
+     */
     public void switchToHome1(ActionEvent event) throws IOException {
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/home1.fxml")));
@@ -33,6 +38,11 @@ public class LoginController {
         stage.show();
     }
 
+    /** This method is called when the login succeeds. It switches to the home2 page.
+     *
+     * @param event The event that is triggered when the login button is clicked.
+     * @throws IOException Throws an IOException if the FXML file cannot be found.
+     */
     public void switchToHome2(ActionEvent event) throws IOException {
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/home2.fxml")));
@@ -40,6 +50,12 @@ public class LoginController {
         stage.show();
     }
 
+    /** This method is called when the login button is clicked. It send a request to the server to check if the
+     * username and password are correct. If they are, it switches to the home page. If not, it displays an error message.
+     *
+     * @param event The event that is triggered when the login button is clicked.
+     * @throws IOException Throws an IOException if the FXML file cannot be found.
+     */
     public void login(ActionEvent event) throws IOException {
         String username = usernameField.getText();
         String password = passwordField.getText();

@@ -16,6 +16,11 @@ public class Home2Controller {
 
     private Stage stage;
 
+    /** This method is called when the user clicks the "Logout" button. It logs the user out and opens the home1 page.
+     *
+     * @param event The event that triggers the method.
+     * @throws IOException Throws an IOException if the FXML file cannot be found.
+     */
     public void logout(ActionEvent event) throws IOException {
         RequestHandler.getRequestHandler().setToken("");
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -24,6 +29,11 @@ public class Home2Controller {
         stage.show();
     }
 
+    /** This method is called when the user clicks the "Leaderboard" button. It opens the leaderboard page.
+     *
+     * @param event The event that triggers the method.
+     * @throws IOException Throws an IOException if the FXML file cannot be found.
+     */
     public void switchToLeaderboard(ActionEvent event) throws IOException {
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/leaderboard.fxml")));

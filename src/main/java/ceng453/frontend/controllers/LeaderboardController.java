@@ -34,6 +34,10 @@ public class LeaderboardController {
     @FXML
     private Label timeLabel;
 
+    /** Fetches the scores with given day and sets the leaderboard.
+     *
+     * @param day the last days to fetch scores for
+     */
     private void setLeaderboardList(int day) {
         leaderboardList.getItems().clear();
 
@@ -67,6 +71,11 @@ public class LeaderboardController {
         }
     }
 
+    /** This method is called when the user clicks the "Main Menu" button. It opens the home2 page.
+     *
+     * @param event the event that triggers this method
+     * @throws IOException if the FXML file cannot be loaded
+     */
     public void switchToHome2(ActionEvent event) throws IOException {
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/home2.fxml")));
@@ -74,17 +83,29 @@ public class LeaderboardController {
         stage.show();
     }
 
-    public void setWeek(ActionEvent event) throws IOException, JSONException {
+    /** This method is called when the user clicks the "Week" button. It loads the leaderboard with scores in the last 7 days.
+     *
+     * @param event the event that triggers this method
+     */
+    public void setWeek(ActionEvent event) {
         timeLabel.setText("Week");
         setLeaderboardList(7);
     }
 
-    public void setMonth(ActionEvent event) throws IOException {
+    /** This method is called when the user clicks the "Month" button. It loads the leaderboard with scores in the last 30 days.
+     *
+     * @param event the event that triggers this method
+     */
+    public void setMonth(ActionEvent event) {
         timeLabel.setText("Month");
         setLeaderboardList(30);
     }
 
-    public void setAllTimes(ActionEvent event) throws IOException {
+    /** This method is called when the user clicks the "All Times" button. It loads the leaderboard with scores in the last 100000 days.
+     *
+     * @param event the event that triggers this method
+     */
+    public void setAllTimes(ActionEvent event) {
         timeLabel.setText("All Times");
         setLeaderboardList(100000);
     }

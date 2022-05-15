@@ -31,6 +31,11 @@ public class RegisterController {
     @FXML
     private Label errorLabel;
 
+    /** This method is called when the "Main Menu" button is clicked. It switches to the home1 page.
+     *
+     * @param event The event that triggers this method.
+     * @throws IOException Throws an IOException if the FXML file cannot be loaded.
+     */
     public void switchToHome1(ActionEvent event) throws IOException {
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/home1.fxml")));
@@ -38,6 +43,11 @@ public class RegisterController {
         stage.show();
     }
 
+    /** This method is called when the "Register" button is clicked. It registers the user and switches to the home1 page.
+     *
+     * @param event The event that triggers this method.
+     * @throws IOException Throws an IOException if the FXML file cannot be loaded.
+     */
     public void register(ActionEvent event) throws IOException {
         String username = usernameField.getText();
         String email = emailField.getText();
