@@ -52,4 +52,16 @@ public class Home2Controller {
         stage = StageUtils.modifyStage(stage, new Scene(root));
         stage.show();
     }
+
+    /** This method is called when the user clicks the "Play" button. It switches the scene to the board scene.
+     *
+     * @param event The event that triggers the method.
+     * @throws IOException Throws an exception if the fxml file cannot be found.
+     */
+    public void switchToBoard(ActionEvent event) throws IOException {
+        this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/board.fxml")));
+        stage = StageUtils.modifyStage(stage, new Scene(root));
+        stage.show();
+    }
 }

@@ -9,7 +9,7 @@
    <children>
       <VBox alignment="CENTER" spacing="12" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Button mnemonicParsing="false" text="Play">
+            <Button mnemonicParsing="false" onAction="#switchToBoard" text="Play">
                <styleClass>
                   <String fx:value="btn" />
                   <String fx:value="btn-primary" />

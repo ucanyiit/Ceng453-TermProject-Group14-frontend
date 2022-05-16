@@ -15,13 +15,13 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(ApplicationExtension.class)
-public class Home1Tests {
+public class Home2Tests {
     Pane root;
     Stage stage;
 
     @Start
     public void start(Stage stage) throws Exception {
-        root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("home1.fxml")));
+        root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("home2.fxml")));
         this.stage = stage;
         stage.setScene(new Scene(root));
         stage.show();
@@ -33,7 +33,13 @@ public class Home1Tests {
     public void checkButtons() {
         Button registerButton = (Button) root.getChildrenUnmodifiable().get(0);
         Button loginButton = (Button) root.getChildrenUnmodifiable().get(1);
-        assertEquals("Register", registerButton.getText());
-        assertEquals("Login", loginButton.getText());
+        Button leaderboardButton = (Button) root.getChildrenUnmodifiable().get(2);
+        Button accountButton = (Button) root.getChildrenUnmodifiable().get(3);
+        Button logoutButton = (Button) root.getChildrenUnmodifiable().get(4);
+        assertEquals("Play", registerButton.getText());
+        assertEquals("Instructions", loginButton.getText());
+        assertEquals("Leaderboard", leaderboardButton.getText());
+        assertEquals("Account Details", accountButton.getText());
+        assertEquals("Logout", logoutButton.getText());
     }
 }
