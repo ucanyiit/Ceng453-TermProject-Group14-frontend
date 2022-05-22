@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -15,6 +16,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -101,7 +104,13 @@ public class BoardController implements Initializable {
                 for (int i = 0; i < tiles.length(); i++) {
                     JSONObject tile = tiles.getJSONObject(i);
                     Pair<Integer, Integer> location = LOCATION_TO_INDEXES.get(tile.getInt("location"));
-                    gameGrid.add(new Label(tile.getString("name")), location.getKey(), location.getValue());
+                    VBox vbox = new VBox();
+                    vbox.getChildren().add(new Label(tile.getString("name")));
+                    if (tile.get("propertyType").equals("PUBLIC_PROPERTY") || tile.get("propertyType").equals("PRIVATE_PROPERTY")) {
+                        vbox.getChildren().add(new Label(tile.get("price").toString()));
+                    }
+                    vbox.setAlignment(Pos.CENTER);
+                    gameGrid.add(vbox, location.getKey(), location.getValue());
                 }
 
                 for (int i = 0; i < players.length(); i++) {
@@ -153,7 +162,9 @@ public class BoardController implements Initializable {
                 Integer die2 = response.getInt("dice2");
 
                 turnAdvanceLabel.setText(die1 + " + " + die2 + " = " + (die1 + die2));
-                turnAdvanceButton.setText("End Turn");
+                if (!die1.equals(die2)) {
+                    turnAdvanceButton.setText("End Turn");
+                }
 
                 playerService.advanceLocation(die1 + die2);
 
@@ -222,8 +233,8 @@ public class BoardController implements Initializable {
 
     private void addPlayerCircle(Integer location, Integer orderOfPlay) {
         Pair<Integer, Integer> tileIndex = LOCATION_TO_INDEXES.get(location);
-        Circle circle = new Circle(5, colors.get(orderOfPlay));
-        double offset = 0.2 + orderOfPlay / 10.;
+        Circle circle = new Circle(10, colors.get(orderOfPlay));
+        double offset = 0.4 + orderOfPlay / 5.;
 
         circle.centerXProperty().bind(pane.widthProperty().multiply((tileIndex.getKey() + offset) / BOARD_SIZE));
         circle.centerYProperty().bind(pane.heightProperty().multiply((tileIndex.getValue() + 0.2) / BOARD_SIZE));
