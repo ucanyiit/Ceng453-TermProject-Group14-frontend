@@ -4,6 +4,7 @@ import ceng453.frontend.enums.PlayerState;
 import ceng453.frontend.services.PlayerService;
 import ceng453.frontend.utils.RequestHandler;
 import ceng453.frontend.utils.StageUtils;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,9 +15,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -53,6 +54,10 @@ public class BoardController implements Initializable {
     private Label turnAdvanceLabel;
     @FXML
     private Button turnAdvanceButton;
+    @FXML
+    private Button takeActionButton;
+    @FXML
+    private ListView<String> actionsList;
 
     PlayerService playerService = new PlayerService();
     private String gameId;
@@ -112,6 +117,7 @@ public class BoardController implements Initializable {
                     if (tile.get("propertyType").equals("PUBLIC_PROPERTY") || tile.get("propertyType").equals("PRIVATE_PROPERTY")) {
                         vbox.getChildren().add(new Label(tile.get("price").toString()));
                     }
+
                     vbox.setAlignment(Pos.CENTER);
                     gameGrid.add(vbox, location.getKey(), location.getValue());
                 }
@@ -163,6 +169,12 @@ public class BoardController implements Initializable {
                 JSONObject response = obj.getJSONObject("response");
                 Integer die1 = response.getInt("dice1");
                 Integer die2 = response.getInt("dice2");
+                JSONArray jsonActions = response.getJSONArray("actions");
+                List<String> actions = new ArrayList<>();
+                for (int i = 0; i < jsonActions.length(); i++) {
+                    actions.add(jsonActions.get(i).toString());
+                }
+                setTakeActionsList(actions);
 
                 turnAdvanceLabel.setText(die1 + " + " + die2 + " = " + (die1 + die2));
 
@@ -268,6 +280,58 @@ public class BoardController implements Initializable {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/home2.fxml")));
         stage = StageUtils.modifyStage(stage, new Scene(root));
         stage.show();
+    }
+
+    /** This method is called user pressed take action button.
+     *
+     * @param event The event that is triggered when the game is finished.
+     * @throws IOException Throws an IOException if the FXML file cannot be found.
+     */
+    public void takeAction(ActionEvent event) throws IOException {
+        String selectedAction = actionsList.getSelectionModel().getSelectedItem();
+        if (selectedAction == null) {
+            errorLabel.setText("Please select an action.");
+            return;
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("gameId", gameId);
+            jsonObject.put("action", selectedAction);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            errorLabel.setText("Error: " + e.getMessage());
+            return;
+        }
+
+        try {
+            JSONObject obj = RequestHandler.getRequestHandler().postRequest(jsonObject, "game/take-action");
+            boolean status = obj.getBoolean("status");
+
+            if (status) {
+                String message = obj.getString("message");
+                errorLabel.setText(message);
+                setTakeActionsList(null);
+            } else {
+                String message = obj.getString("message");
+                errorLabel.setText(message);
+            }
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+            errorLabel.setText("Failed to create game.");
+        }
+    }
+
+    private void setTakeActionsList(List<String> actions) {
+        if (actions == null) {
+            actionsList.setItems(FXCollections.observableArrayList());
+            takeActionButton.setVisible(false);
+            actionsList.setVisible(false);
+        } else {
+            actionsList.setItems(FXCollections.observableArrayList(actions));
+            takeActionButton.setVisible(true);
+            actionsList.setVisible(true);
+        }
     }
 
     public void buyProperty(ActionEvent event) {
