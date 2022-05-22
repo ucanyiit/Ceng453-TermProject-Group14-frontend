@@ -153,10 +153,12 @@ public class BoardController implements Initializable {
                 Integer die2 = response.getInt("dice2");
 
                 turnAdvanceLabel.setText(die1 + " + " + die2 + " = " + (die1 + die2));
-                turnAdvanceButton.setText("End Turn");
 
-                playerService.advanceLocation(die1 + die2);
+                if (!die1.equals(die2)) {
+                    turnAdvanceButton.setText("End Turn");
+                }
 
+                playerService.advanceLocation(die1, die2);
                 updatePlayerCircle(playerService.getLocation(), 0);
             } else {
                 String message = obj.getString("message");
