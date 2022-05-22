@@ -5,7 +5,7 @@ import ceng453.frontend.enums.PlayerState;
 public class PlayerService implements IPlayerService {
 
     private Integer location = 0;
-    private static final Integer TOTAL_TILE_COUNT = 20;
+    private static final Integer TOTAL_TILE_COUNT = 16;
     private PlayerState state = PlayerState.PLAYING;
 
     @Override
@@ -14,10 +14,12 @@ public class PlayerService implements IPlayerService {
     }
 
     @Override
-    public void advanceLocation(Integer tileCount) {
-        this.location += tileCount;
+    public void advanceLocation(Integer die1, Integer die2) {
+        this.location += die1 + die2;
         this.location %= TOTAL_TILE_COUNT;
-        this.setState(PlayerState.WAITING);
+        if (!die1.equals(die2)) {
+            this.setState(PlayerState.WAITING);
+        }
     }
 
     @Override
