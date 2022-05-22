@@ -20,6 +20,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.apache.http.NameValuePair;
@@ -105,7 +106,9 @@ public class BoardController implements Initializable {
                     JSONObject tile = tiles.getJSONObject(i);
                     Pair<Integer, Integer> location = LOCATION_TO_INDEXES.get(tile.getInt("location"));
                     VBox vbox = new VBox();
-                    vbox.getChildren().add(new Label(tile.getString("name")));
+                    Text textTileName = new Text(tile.getString("name"));
+                    textTileName.setStyle("-fx-font-weight: bold");
+                    vbox.getChildren().add(textTileName);
                     if (tile.get("propertyType").equals("PUBLIC_PROPERTY") || tile.get("propertyType").equals("PRIVATE_PROPERTY")) {
                         vbox.getChildren().add(new Label(tile.get("price").toString()));
                     }
@@ -265,5 +268,9 @@ public class BoardController implements Initializable {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/home2.fxml")));
         stage = StageUtils.modifyStage(stage, new Scene(root));
         stage.show();
+    }
+
+    public void buyProperty(ActionEvent event) {
+
     }
 }
