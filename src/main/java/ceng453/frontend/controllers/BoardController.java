@@ -58,6 +58,8 @@ public class BoardController implements Initializable {
     private Button takeActionButton;
     @FXML
     private ListView<String> actionsList;
+    @FXML
+    private ListView<String> playersList;
 
     PlayerService playerService = new PlayerService();
     private String gameId;
@@ -125,6 +127,7 @@ public class BoardController implements Initializable {
                 for (int i = 0; i < players.length(); i++) {
                     JSONObject player = players.getJSONObject(i);
                     addPlayerCircle(player.getInt("location"), player.getInt("orderOfPlay"));
+                    playersList.getItems().add(player.getString("username") + ", " + player.getInt("money"));
                 }
             } else {
                 String message = obj.getString("message");

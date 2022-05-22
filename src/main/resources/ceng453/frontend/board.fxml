@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -28,10 +29,18 @@
         </rowConstraints>
          <children>
             <Label fx:id="errorLabel" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <ListView fx:id="actionsList" prefHeight="200.0" prefWidth="200.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Button fx:id="takeActionButton" mnemonicParsing="false" onAction="#takeAction" text="Take Action" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <Button fx:id="resignButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#resign" text="Resign" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <Button mnemonicParsing="false" onAction="#buyProperty" text="Buy" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ListView fx:id="actionsList" prefHeight="200.0" prefWidth="200.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Button fx:id="takeActionButton" mnemonicParsing="false" onAction="#takeAction" text="Take Action" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <styleClass>
+                  <String fx:value="btn" />
+                  <String fx:value="btn-success" />
+               </styleClass>
+            </Button>
+            <Button fx:id="resignButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#resign" text="Resign" GridPane.columnIndex="3" GridPane.rowIndex="1">
+               <styleClass>
+                  <String fx:value="btn" />
+                  <String fx:value="btn-danger" />
+               </styleClass></Button>
             <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-border-width: 3;" />
             <Pane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-border-width: 3;" GridPane.columnIndex="1" />
             <Pane layoutX="128.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-border-width: 3;" GridPane.columnIndex="2" />
@@ -48,9 +57,14 @@
             <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-border-width: 3;" GridPane.columnIndex="4" GridPane.rowIndex="3" />
             <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-border-width: 3;" GridPane.columnIndex="4" GridPane.rowIndex="2" />
             <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-border-width: 3;" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-            <Label fx:id="errorLabel" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Label fx:id="turnAdvanceLabel" prefHeight="17.0" prefWidth="14.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-            <Button fx:id="turnAdvanceButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#turnAdvance" text="Roll Dice" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Label fx:id="turnAdvanceLabel" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <Button fx:id="turnAdvanceButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#turnAdvance" text="Roll Dice" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <styleClass>
+                  <String fx:value="btn" />
+                  <String fx:value="btn-primary" />
+               </styleClass>
+            </Button>
+            <ListView fx:id="playersList" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>
