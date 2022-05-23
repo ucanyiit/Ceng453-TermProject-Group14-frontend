@@ -55,8 +55,6 @@ public class BoardController implements Initializable {
     @FXML
     private Button turnAdvanceButton;
     @FXML
-    private Button takeActionButton;
-    @FXML
     private ListView<String> actionsList;
     @FXML
     private ListView<String> playersList;
@@ -64,6 +62,7 @@ public class BoardController implements Initializable {
     PlayerService playerService = new PlayerService();
     private String gameId;
     private List<Circle> playerCircles = new ArrayList<>();
+    private List<VBox> tileBoxes = new ArrayList<>();
 
     private static final List<Pair<Integer, Integer>> LOCATION_TO_INDEXES = List.of(
             new Pair<>(0, 4),
@@ -86,6 +85,59 @@ public class BoardController implements Initializable {
 
     private List<Color> colors = List.of(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.PURPLE);
 
+    private void setPlayerCircles(JSONArray players) throws JSONException {
+        playersList.getItems().clear();
+        for (int i = 0; i < players.length(); i++) {
+            JSONObject player = players.getJSONObject(i);
+            addPlayerCircle(player.getInt("location"), player.getInt("orderOfPlay"));
+            playersList.getItems().add(player.getString("username") + ", " + player.getInt("money"));
+        }
+    }
+
+    private void updatePlayerCircles(JSONArray players) throws JSONException {
+        playersList.getItems().clear();
+        for (int i = 0; i < players.length(); i++) {
+            JSONObject player = players.getJSONObject(i);
+            updatePlayerCircle(player.getInt("location"), player.getInt("orderOfPlay"));
+            playersList.getItems().add(player.getString("username") + ", " + player.getInt("money"));
+        }
+    }
+
+    private void setBoardWithGameDTO(JSONObject response) throws JSONException {
+        JSONArray tiles = response.getJSONArray("tiles");
+        this.gameId = response.getString("gameId");
+        playerService.setState(PlayerState.PLAYING);
+
+        for (int i = 0; i < tiles.length(); i++) {
+            JSONObject tile = tiles.getJSONObject(i);
+            Pair<Integer, Integer> location = LOCATION_TO_INDEXES.get(tile.getInt("location"));
+            VBox vbox = new VBox();
+
+            if (tileBoxes.size() != i) {
+                vbox = tileBoxes.get(i);
+                vbox.getChildren().clear();
+            }
+
+            Text textTileName = new Text(tile.getString("name"));
+            textTileName.setStyle("-fx-font-weight: bold");
+            vbox.getChildren().add(textTileName);
+            if (tile.get("propertyType").equals("PUBLIC_PROPERTY") || tile.get("propertyType").equals("PRIVATE_PROPERTY")) {
+                vbox.getChildren().add(new Label("Price: " + tile.get("price").toString()));
+            }
+            System.out.println(i + " " + tile.get("owner"));
+            if (!tile.get("owner").equals("")) {
+                vbox.getChildren().add(new Label("Owner: " + tile.get("owner").toString()));
+            }
+
+            vbox.setAlignment(Pos.CENTER);
+
+            if (tileBoxes.size() == i) {
+                gameGrid.add(vbox, location.getKey(), location.getValue());
+                tileBoxes.add(vbox);
+            }
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -104,31 +156,9 @@ public class BoardController implements Initializable {
 
             if (status) {
                 JSONObject response = obj.getJSONObject("response");
-                JSONArray tiles = response.getJSONArray("tiles");
+                setBoardWithGameDTO(response);
                 JSONArray players = response.getJSONArray("players");
-                this.gameId = response.getString("gameId");
-                playerService.setState(PlayerState.PLAYING);
-
-                for (int i = 0; i < tiles.length(); i++) {
-                    JSONObject tile = tiles.getJSONObject(i);
-                    Pair<Integer, Integer> location = LOCATION_TO_INDEXES.get(tile.getInt("location"));
-                    VBox vbox = new VBox();
-                    Text textTileName = new Text(tile.getString("name"));
-                    textTileName.setStyle("-fx-font-weight: bold");
-                    vbox.getChildren().add(textTileName);
-                    if (tile.get("propertyType").equals("PUBLIC_PROPERTY") || tile.get("propertyType").equals("PRIVATE_PROPERTY")) {
-                        vbox.getChildren().add(new Label(tile.get("price").toString()));
-                    }
-
-                    vbox.setAlignment(Pos.CENTER);
-                    gameGrid.add(vbox, location.getKey(), location.getValue());
-                }
-
-                for (int i = 0; i < players.length(); i++) {
-                    JSONObject player = players.getJSONObject(i);
-                    addPlayerCircle(player.getInt("location"), player.getInt("orderOfPlay"));
-                    playersList.getItems().add(player.getString("username") + ", " + player.getInt("money"));
-                }
+                setPlayerCircles(players);
             } else {
                 String message = obj.getString("message");
                 errorLabel.setText(message);
@@ -149,6 +179,8 @@ public class BoardController implements Initializable {
         if (state == PlayerState.PLAYING) {
             this.rollDice(event);
         } else if (state == PlayerState.WAITING) {
+            this.takeAction(event);
+        } else if (state == PlayerState.DONE) {
             this.endTurn(event);
         } else {
             errorLabel.setText("Game is not in a valid state.");
@@ -181,9 +213,8 @@ public class BoardController implements Initializable {
 
                 turnAdvanceLabel.setText(die1 + " + " + die2 + " = " + (die1 + die2));
 
-                if (!die1.equals(die2)) {
-                    turnAdvanceButton.setText("End Turn");
-                }
+                turnAdvanceButton.setText("Take Action");
+                playerService.setState(PlayerState.WAITING);
 
                 playerService.advanceLocation(die1, die2);
                 updatePlayerCircle(playerService.getLocation(), 0);
@@ -211,9 +242,16 @@ public class BoardController implements Initializable {
             boolean status = obj.getBoolean("status");
 
             if (status) {
+                JSONObject response = obj.getJSONObject("response");
+                setBoardWithGameDTO(response);
+                JSONArray players = response.getJSONArray("players");
+                updatePlayerCircles(players);
+
                 turnAdvanceLabel.setText("You have finished the turn.");
-                turnAdvanceButton.setText("Roll Dice");
-                playerService.setState(PlayerState.PLAYING);
+                if (response.getInt("turn") == 0) {
+                    turnAdvanceButton.setText("Roll Dice");
+                    playerService.setState(PlayerState.PLAYING);
+                }
             } else {
                 String message = obj.getString("message");
                 errorLabel.setText(message);
@@ -245,7 +283,7 @@ public class BoardController implements Initializable {
             }
         } catch (JSONException | IOException | URISyntaxException e) {
             e.printStackTrace();
-            errorLabel.setText("Failed to roll dice.");
+            errorLabel.setText("Failed to resign.");
         }
     }
 
@@ -288,9 +326,8 @@ public class BoardController implements Initializable {
     /** This method is called user pressed take action button.
      *
      * @param event The event that is triggered when the game is finished.
-     * @throws IOException Throws an IOException if the FXML file cannot be found.
      */
-    public void takeAction(ActionEvent event) throws IOException {
+    public void takeAction(ActionEvent event) {
         String selectedAction = actionsList.getSelectionModel().getSelectedItem();
         if (selectedAction == null) {
             errorLabel.setText("Please select an action.");
@@ -312,9 +349,14 @@ public class BoardController implements Initializable {
             boolean status = obj.getBoolean("status");
 
             if (status) {
-                String message = obj.getString("message");
-                errorLabel.setText(message);
+                JSONObject response = obj.getJSONObject("response");
+                setBoardWithGameDTO(response);
+                JSONArray players = response.getJSONArray("players");
+                updatePlayerCircles(players);
                 setTakeActionsList(null);
+
+                turnAdvanceButton.setText("End Turn");
+                playerService.setState(PlayerState.DONE);
             } else {
                 String message = obj.getString("message");
                 errorLabel.setText(message);
@@ -328,11 +370,9 @@ public class BoardController implements Initializable {
     private void setTakeActionsList(List<String> actions) {
         if (actions == null) {
             actionsList.setItems(FXCollections.observableArrayList());
-            takeActionButton.setVisible(false);
             actionsList.setVisible(false);
         } else {
             actionsList.setItems(FXCollections.observableArrayList(actions));
-            takeActionButton.setVisible(true);
             actionsList.setVisible(true);
         }
     }
