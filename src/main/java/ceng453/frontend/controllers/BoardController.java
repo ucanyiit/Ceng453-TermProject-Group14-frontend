@@ -33,10 +33,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 
 
 public class BoardController implements Initializable {
@@ -58,7 +55,10 @@ public class BoardController implements Initializable {
     private ListView<String> actionsList;
     @FXML
     private ListView<String> playersList;
+    @FXML
+    private Label botActionLabel;
 
+    private Queue<String> botActionQueue = new PriorityQueue<>();
     PlayerService playerService = new PlayerService();
     private String gameId;
     private List<Circle> playerCircles = new ArrayList<>();
@@ -210,7 +210,7 @@ public class BoardController implements Initializable {
                     actions.add(jsonActions.get(i).toString());
                 }
                 setTakeActionsList(actions);
-
+                setBotActionList(null);
                 turnAdvanceLabel.setText(die1 + " + " + die2 + " = " + (die1 + die2));
 
                 turnAdvanceButton.setText("Take Action");
@@ -243,15 +243,31 @@ public class BoardController implements Initializable {
 
             if (status) {
                 JSONObject response = obj.getJSONObject("response");
-                setBoardWithGameDTO(response);
-                JSONArray players = response.getJSONArray("players");
+                JSONObject game = response.getJSONObject("game");
+                setBoardWithGameDTO(game);
+                JSONArray players = game.getJSONArray("players");
                 updatePlayerCircles(players);
 
                 turnAdvanceLabel.setText("You have finished the turn.");
-                if (response.getInt("turn") == 0) {
+                if (game.getInt("turn") == 0) {
                     turnAdvanceButton.setText("Roll Dice");
                     playerService.setState(PlayerState.PLAYING);
                 }
+                Object isNull = response.get("botActions");
+                if (isNull.toString().equals("null"))
+                    return; // bot could not play
+                // TODO: add next turn button and keep it as there is no action done by bot
+                JSONArray botActionList = response.getJSONArray("botActions");
+                for (int i = 0; i < botActionList.length(); i++) {
+                    JSONObject temp = botActionList.getJSONObject(i);
+                    botActionQueue.add(
+                            temp.getString("action") + "\n" +
+                                    "DICE(" + temp.get("dice1").toString() + "," + temp.get("dice2").toString() + ")");
+                }
+                String firstElement = botActionQueue.poll();
+                setBotActionList(firstElement);
+
+
             } else {
                 String message = obj.getString("message");
                 errorLabel.setText(message);
@@ -374,6 +390,16 @@ public class BoardController implements Initializable {
         } else {
             actionsList.setItems(FXCollections.observableArrayList(actions));
             actionsList.setVisible(true);
+        }
+    }
+
+    private void setBotActionList(String botAction) {
+        if (botAction == null) {
+            botActionLabel.setText("");
+            botActionLabel.setVisible(false);
+        } else {
+            botActionLabel.setText(botAction);
+            botActionLabel.setVisible(true);
         }
     }
 
