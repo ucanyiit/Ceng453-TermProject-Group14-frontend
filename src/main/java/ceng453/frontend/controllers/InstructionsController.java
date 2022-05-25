@@ -25,7 +25,7 @@ import java.util.*;
 public class InstructionsController implements Initializable {
     private Stage stage;
     @FXML
-    private ListView<String> instructionsList;
+    private Label instructionsList;
     @FXML
     private Label errorLabel;
 
@@ -36,7 +36,7 @@ public class InstructionsController implements Initializable {
 
     /** Fetches the instructions and sets the instructions list. */
     private void setInstructionsList() {
-        instructionsList.getItems().clear();
+        instructionsList.setText("");
 
         List<NameValuePair> params = List.of();
 
@@ -47,7 +47,7 @@ public class InstructionsController implements Initializable {
             if (status) {
                 JSONArray instructions = obj.getJSONArray("response");
                 for (int i = 0; i < instructions.length(); i++) {
-                    instructionsList.getItems().add(instructions.getString(i));
+                    instructionsList.setText(instructions.getString(i));
                 }
             } else {
                 String message = obj.getString("message");
