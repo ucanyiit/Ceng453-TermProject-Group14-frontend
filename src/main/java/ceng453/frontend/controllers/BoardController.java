@@ -124,7 +124,7 @@ public class BoardController implements Initializable {
             if (tile.get("propertyType").equals("PUBLIC_PROPERTY") || tile.get("propertyType").equals("PRIVATE_PROPERTY")) {
                 vbox.getChildren().add(new Label("Price: " + tile.get("price").toString()));
             }
-            System.out.println(i + " " + tile.get("owner"));
+
             if (!tile.get("owner").equals("")) {
                 vbox.getChildren().add(new Label("Owner: " + tile.get("owner").toString()));
             }
@@ -175,13 +175,14 @@ public class BoardController implements Initializable {
      * @param event The event that triggers the method.
      */
     public void turnAdvance(ActionEvent event) {
+        errorLabel.setText("");
         PlayerState state = playerService.getState();
         if (state == PlayerState.PLAYING) {
             this.rollDice(event);
         } else if (state == PlayerState.WAITING) {
             this.takeAction(event);
         } else if (state == PlayerState.DONE) {
-            this.endTurn(event);
+            this.nextTurn(event);
         } else {
             errorLabel.setText("Game is not in a valid state.");
         }
@@ -232,13 +233,13 @@ public class BoardController implements Initializable {
      *
      * @param event The event that triggers the method.
      */
-    private void endTurn(ActionEvent event) {
+    private void nextTurn(ActionEvent event) {
         List<NameValuePair> params = List.of(
                 new BasicNameValuePair("gameId", this.gameId)
         );
 
         try {
-            JSONObject obj = RequestHandler.getRequestHandler().getRequest(params, "game/end-turn");
+            JSONObject obj = RequestHandler.getRequestHandler().getRequest(params, "game/next-turn");
             boolean status = obj.getBoolean("status");
 
             if (status) {
@@ -274,7 +275,7 @@ public class BoardController implements Initializable {
             }
         } catch (JSONException | IOException | URISyntaxException e) {
             e.printStackTrace();
-            errorLabel.setText("Failed to end the turn.");
+            errorLabel.setText("Failed to advance the turn.");
         }
     }
 
@@ -371,7 +372,7 @@ public class BoardController implements Initializable {
                 updatePlayerCircles(players);
                 setTakeActionsList(null);
 
-                turnAdvanceButton.setText("End Turn");
+                turnAdvanceButton.setText("Next Turn");
                 playerService.setState(PlayerState.DONE);
             } else {
                 String message = obj.getString("message");
