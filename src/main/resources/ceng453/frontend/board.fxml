@@ -30,7 +30,7 @@
          <children>
             <Label fx:id="errorLabel" textFill="RED" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <ListView fx:id="actionsList" prefHeight="200.0" prefWidth="200.0" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Button fx:id="resignButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#resign" text="Resign" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <Button fx:id="resignButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#resign" text="Quit" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <styleClass>
                   <String fx:value="btn" />
                   <String fx:value="btn-danger" />

@@ -190,8 +190,10 @@ public class BoardController implements Initializable {
             this.rollDice(event);
         } else if (state == PlayerState.WAITING) {
             this.takeAction(event);
+            turnAdvanceLabel.setText("You have played your turn.");
         } else if (state == PlayerState.DONE) {
             this.nextTurn(event);
+            turnAdvanceLabel.setText("The bot has played their turn.");
         } else {
             errorLabel.setText("Game is not in a valid state.");
         }
@@ -258,7 +260,6 @@ public class BoardController implements Initializable {
                 JSONArray players = game.getJSONArray("players");
                 updatePlayerCircles(players);
 
-                turnAdvanceLabel.setText("You have finished the turn.");
                 if (game.getInt("turn") == 0) {
                     turnAdvanceButton.setText("Roll Dice");
                     playerService.setState(PlayerState.PLAYING);
@@ -392,6 +393,7 @@ public class BoardController implements Initializable {
         } else {
             actionsList.setItems(FXCollections.observableArrayList(actions));
             actionsList.setVisible(true);
+            actionsList.getSelectionModel().selectFirst();
         }
     }
 
