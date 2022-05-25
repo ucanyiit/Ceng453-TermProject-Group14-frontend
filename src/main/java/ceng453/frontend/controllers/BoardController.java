@@ -84,13 +84,21 @@ public class BoardController implements Initializable {
     );
 
     private List<Color> colors = List.of(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.PURPLE);
+    private List<String> colorNames = List.of("RED", "BLUE", "GREEN", "YELLOW", "PURPLE");
+
+    private String getPlayerDesc(int i, JSONObject player) throws JSONException {
+        return colorNames.get(i)
+                + ": " + player.getString("username")
+                + ", money:" + player.getInt("money")
+                + ", jail:" + player.getInt("jailDuration");
+    }
 
     private void setPlayerCircles(JSONArray players) throws JSONException {
         playersList.getItems().clear();
         for (int i = 0; i < players.length(); i++) {
             JSONObject player = players.getJSONObject(i);
             addPlayerCircle(player.getInt("location"), player.getInt("orderOfPlay"));
-            playersList.getItems().add(player.getString("username") + ", " + player.getInt("money"));
+            playersList.getItems().add(getPlayerDesc(i, player));
         }
     }
 
@@ -99,14 +107,13 @@ public class BoardController implements Initializable {
         for (int i = 0; i < players.length(); i++) {
             JSONObject player = players.getJSONObject(i);
             updatePlayerCircle(player.getInt("location"), player.getInt("orderOfPlay"));
-            playersList.getItems().add(player.getString("username") + ", " + player.getInt("money"));
+            playersList.getItems().add(getPlayerDesc(i, player));
         }
     }
 
     private void setBoardWithGameDTO(JSONObject response) throws JSONException {
         JSONArray tiles = response.getJSONArray("tiles");
         this.gameId = response.getString("gameId");
-        playerService.setState(PlayerState.PLAYING);
 
         for (int i = 0; i < tiles.length(); i++) {
             JSONObject tile = tiles.getJSONObject(i);
@@ -159,6 +166,7 @@ public class BoardController implements Initializable {
                 setBoardWithGameDTO(response);
                 JSONArray players = response.getJSONArray("players");
                 setPlayerCircles(players);
+                playerService.setState(PlayerState.PLAYING);
             } else {
                 String message = obj.getString("message");
                 errorLabel.setText(message);
@@ -176,6 +184,7 @@ public class BoardController implements Initializable {
      */
     public void turnAdvance(ActionEvent event) {
         errorLabel.setText("");
+        setBotActionList(null);
         PlayerState state = playerService.getState();
         if (state == PlayerState.PLAYING) {
             this.rollDice(event);
@@ -207,18 +216,18 @@ public class BoardController implements Initializable {
                 Integer die2 = response.getInt("dice2");
                 JSONArray jsonActions = response.getJSONArray("actions");
                 List<String> actions = new ArrayList<>();
+
+                updatePlayerCircles(response.getJSONObject("game").getJSONArray("players"));
+
                 for (int i = 0; i < jsonActions.length(); i++) {
                     actions.add(jsonActions.get(i).toString());
                 }
+
                 setTakeActionsList(actions);
-                setBotActionList(null);
                 turnAdvanceLabel.setText(die1 + " + " + die2 + " = " + (die1 + die2));
 
                 turnAdvanceButton.setText("Take Action");
                 playerService.setState(PlayerState.WAITING);
-
-                playerService.advanceLocation(die1, die2);
-                updatePlayerCircle(playerService.getLocation(), 0);
             } else {
                 String message = obj.getString("message");
                 errorLabel.setText(message);
@@ -254,21 +263,13 @@ public class BoardController implements Initializable {
                     turnAdvanceButton.setText("Roll Dice");
                     playerService.setState(PlayerState.PLAYING);
                 }
-                Object isNull = response.get("botActions");
+                Object isNull = response.get("botAction");
                 if (isNull.toString().equals("null"))
                     return; // bot could not play
-                // TODO: add next turn button and keep it as there is no action done by bot
-                JSONArray botActionList = response.getJSONArray("botActions");
-                for (int i = 0; i < botActionList.length(); i++) {
-                    JSONObject temp = botActionList.getJSONObject(i);
-                    botActionQueue.add(
-                            temp.getString("action") + "\n" +
-                                    "DICE(" + temp.get("dice1").toString() + "," + temp.get("dice2").toString() + ")");
-                }
-                String firstElement = botActionQueue.poll();
-                setBotActionList(firstElement);
-
-
+                JSONObject action = response.getJSONObject("botAction");
+                String botAction = action.getString("action") + "\n" +
+                                "DICE(" + action.get("dice1").toString() + "," + action.get("dice2").toString() + ")";
+                setBotActionList(botAction);
             } else {
                 String message = obj.getString("message");
                 errorLabel.setText(message);
@@ -402,9 +403,5 @@ public class BoardController implements Initializable {
             botActionLabel.setText(botAction);
             botActionLabel.setVisible(true);
         }
-    }
-
-    public void buyProperty(ActionEvent event) {
-
     }
 }
