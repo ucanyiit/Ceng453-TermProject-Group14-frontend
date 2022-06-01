@@ -55,6 +55,8 @@ public class BoardController implements Initializable {
     @FXML
     private Button turnAdvanceButton;
     @FXML
+    private Button resignButton;
+    @FXML
     private ListView<String> actionsList;
     @FXML
     private ListView<String> playersList;
@@ -327,6 +329,7 @@ public class BoardController implements Initializable {
                 playerService.setState(PlayerState.GAME_OVER);
                 errorLabel.setText("Game is finished.");
                 turnAdvanceButton.setText("Go Back To Main Menu");
+                resignButton.setVisible(false);
             } else {
                 String message = obj.getString("message");
                 errorLabel.setText(message);
