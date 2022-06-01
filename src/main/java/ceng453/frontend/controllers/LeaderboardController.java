@@ -1,5 +1,6 @@
 package ceng453.frontend.controllers;
 
+import ceng453.frontend.Score;
 import ceng453.frontend.utils.RequestHandler;
 import ceng453.frontend.utils.StageUtils;
 import javafx.event.ActionEvent;
@@ -10,7 +11,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -29,9 +32,20 @@ public class LeaderboardController implements Initializable {
 
     private Stage stage;
     @FXML
-    private ListView<String> leaderboardList;
+    private TableView<Score> scoreTable;
+    @FXML
+    private TableColumn<Score, String> ranks;
+    @FXML
+    private TableColumn<Score, String> names;
+    @FXML
+    private TableColumn<Score, String> times;
+    @FXML
+    private TableColumn<Score, String> scores;
     @FXML
     private Label timeLabel;
+
+    public LeaderboardController() {
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -44,8 +58,6 @@ public class LeaderboardController implements Initializable {
      * @param day the last days to fetch scores for
      */
     private void setLeaderboardList(int day) {
-        leaderboardList.getItems().clear();
-
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         String endDate = dateFormat.format(new Date());
         Calendar cal = Calendar.getInstance();
@@ -62,10 +74,14 @@ public class LeaderboardController implements Initializable {
             boolean status = obj.getBoolean("status");
 
             if (status) {
-                JSONArray scores = obj.getJSONArray("response");
-                for (int i = 0; i < scores.length(); i++) {
-                    leaderboardList.getItems().add(scores.getJSONObject(i).getString("username") + ": " + scores.getJSONObject(i).getString("score"));
-                }
+                JSONArray scoresArray = obj.getJSONArray("response");
+
+                ranks.setCellValueFactory(new PropertyValueFactory<Score, String>("rank"));
+                names.setCellValueFactory(new PropertyValueFactory<Score, String>("name"));
+                times.setCellValueFactory(new PropertyValueFactory<Score, String>("time"));
+                scores.setCellValueFactory(new PropertyValueFactory<Score, String>("score"));
+
+                scoreTable.getItems().setAll(parseScoreList(scoresArray));
             } else {
                 String message = obj.getString("message");
                 timeLabel.setText(message);
@@ -74,6 +90,15 @@ public class LeaderboardController implements Initializable {
             e.printStackTrace();
             timeLabel.setText("Failed to fetch scores.");
         }
+    }
+
+    private List<Score> parseScoreList(JSONArray scoresArray) throws JSONException {
+        List<Score> scores = new ArrayList<>();
+        for (int i = 0; i < scoresArray.length(); i++) {
+            JSONObject score = scoresArray.getJSONObject(i);
+            scores.add(new Score(i, score.getString("username"), score.getDouble("score"), score.getString("date")));
+        }
+        return scores;
     }
 
     /** This method is called when the user clicks the "Main Menu" button. It opens the home2 page.
