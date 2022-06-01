@@ -3,5 +3,6 @@ package ceng453.frontend.enums;
 public enum PlayerState {
     WAITING,
     PLAYING,
-    DONE
+    DONE,
+    GAME_OVER
 }

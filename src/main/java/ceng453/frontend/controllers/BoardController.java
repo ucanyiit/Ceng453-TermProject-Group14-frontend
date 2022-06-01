@@ -16,6 +16,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -58,7 +61,6 @@ public class BoardController implements Initializable {
     @FXML
     private Label botActionLabel;
 
-    private Queue<String> botActionQueue = new PriorityQueue<>();
     PlayerService playerService = new PlayerService();
     private String gameId;
     private List<Circle> playerCircles = new ArrayList<>();
@@ -102,12 +104,16 @@ public class BoardController implements Initializable {
         }
     }
 
-    private void updatePlayerCircles(JSONArray players) throws JSONException {
+    private void updatePlayerCircles(JSONArray players, ActionEvent event) throws JSONException {
         playersList.getItems().clear();
         for (int i = 0; i < players.length(); i++) {
             JSONObject player = players.getJSONObject(i);
             updatePlayerCircle(player.getInt("location"), player.getInt("orderOfPlay"));
             playersList.getItems().add(getPlayerDesc(i, player));
+        }
+
+        if (players.getJSONObject(0).getInt("money") < 0) {
+            this.resign(event);
         }
     }
 
@@ -177,19 +183,42 @@ public class BoardController implements Initializable {
         }
     }
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+
+        this.stage.getScene().getAccelerators().put(
+                new KeyCodeCombination(KeyCode.DIGIT9, KeyCombination.CONTROL_DOWN),
+                this::cheat);
+    }
+
+    private void cheat() {
+        errorLabel.setText("");
+        setBotActionList(null);
+        PlayerState state = playerService.getState();
+        if (state != PlayerState.WAITING) {
+            errorLabel.setText("You should be in the take action phase to cheat. :)");
+        } else {
+            this.takeAction(null, "CHEAT");
+            turnAdvanceLabel.setText("You have cheated!!!");
+        }
+    }
+
 
     /** This method is called when the user advances their turn.
      *
      * @param event The event that triggers the method.
      */
-    public void turnAdvance(ActionEvent event) {
+    public void turnAdvance(ActionEvent event) throws IOException {
         errorLabel.setText("");
         setBotActionList(null);
         PlayerState state = playerService.getState();
-        if (state == PlayerState.PLAYING) {
+        if (state == PlayerState.GAME_OVER) {
+            this.switchToHome2(event);
+        } else if (state == PlayerState.PLAYING) {
             this.rollDice(event);
         } else if (state == PlayerState.WAITING) {
-            this.takeAction(event);
+            String selectedAction = actionsList.getSelectionModel().getSelectedItem();
+            this.takeAction(event, selectedAction);
             turnAdvanceLabel.setText("You have played your turn.");
         } else if (state == PlayerState.DONE) {
             this.nextTurn(event);
@@ -219,7 +248,7 @@ public class BoardController implements Initializable {
                 JSONArray jsonActions = response.getJSONArray("actions");
                 List<String> actions = new ArrayList<>();
 
-                updatePlayerCircles(response.getJSONObject("game").getJSONArray("players"));
+                updatePlayerCircles(response.getJSONObject("game").getJSONArray("players"), event);
 
                 for (int i = 0; i < jsonActions.length(); i++) {
                     actions.add(jsonActions.get(i).toString());
@@ -258,7 +287,7 @@ public class BoardController implements Initializable {
                 JSONObject game = response.getJSONObject("game");
                 setBoardWithGameDTO(game);
                 JSONArray players = game.getJSONArray("players");
-                updatePlayerCircles(players);
+                updatePlayerCircles(players, event);
 
                 if (game.getInt("turn") == 0) {
                     turnAdvanceButton.setText("Roll Dice");
@@ -295,7 +324,9 @@ public class BoardController implements Initializable {
             boolean status = obj.getBoolean("status");
 
             if (status) {
-                switchToHome2(event);
+                playerService.setState(PlayerState.GAME_OVER);
+                errorLabel.setText("Game is finished.");
+                turnAdvanceButton.setText("Go Back To Main Menu");
             } else {
                 String message = obj.getString("message");
                 errorLabel.setText(message);
@@ -346,8 +377,7 @@ public class BoardController implements Initializable {
      *
      * @param event The event that is triggered when the game is finished.
      */
-    public void takeAction(ActionEvent event) {
-        String selectedAction = actionsList.getSelectionModel().getSelectedItem();
+    public void takeAction(ActionEvent event, String selectedAction) {
         if (selectedAction == null) {
             errorLabel.setText("Please select an action.");
             return;
@@ -371,11 +401,10 @@ public class BoardController implements Initializable {
                 JSONObject response = obj.getJSONObject("response");
                 setBoardWithGameDTO(response);
                 JSONArray players = response.getJSONArray("players");
-                updatePlayerCircles(players);
-                setTakeActionsList(null);
-
                 turnAdvanceButton.setText("Next Turn");
                 playerService.setState(PlayerState.DONE);
+                updatePlayerCircles(players, event);
+                setTakeActionsList(null);
             } else {
                 String message = obj.getString("message");
                 errorLabel.setText(message);

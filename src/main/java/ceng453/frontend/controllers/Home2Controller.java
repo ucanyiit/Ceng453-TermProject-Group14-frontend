@@ -60,8 +60,11 @@ public class Home2Controller {
      */
     public void switchToBoard(ActionEvent event) throws IOException {
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/board.fxml")));
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ceng453/frontend/board.fxml"));
+        Parent root = loader.load();
         stage = StageUtils.modifyStage(stage, new Scene(root));
         stage.show();
+        ((BoardController) loader.getController()).setStage(stage);
     }
 }
