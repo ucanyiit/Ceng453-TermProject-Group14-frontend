@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"ceng453.frontend","l":"ceng453.frontend"},{"m":"ceng453.frontend","l":"ceng453.frontend.controllers"},{"m":"ceng453.frontend","l":"ceng453.frontend.enums"},{"m":"ceng453.frontend","l":"ceng453.frontend.services"},{"m":"ceng453.frontend","l":"ceng453.frontend.utils"}];updateSearchResults();
