@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.String?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -9,6 +12,14 @@
    <children>
       <VBox alignment="CENTER" spacing="12" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
+            <ImageView fitHeight="152.0" fitWidth="400.0">
+               <image>
+                  <Image url="@images/monopoly.png" />
+               </image>
+               <VBox.margin>
+                  <Insets bottom="48.0" />
+               </VBox.margin>
+            </ImageView>
             <Button mnemonicParsing="false" onAction="#switchToBoard" text="Play">
                <styleClass>
                   <String fx:value="btn" />
