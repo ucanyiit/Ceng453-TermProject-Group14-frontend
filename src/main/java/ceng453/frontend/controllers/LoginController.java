@@ -50,6 +50,68 @@ public class LoginController {
         stage.show();
     }
 
+    /** This method is called when the user clicks the "remind password" button. It switches to the "remind password" page.
+     *
+     * @param event The event that is triggered when the login button is clicked.
+     * @throws IOException Throws an IOException if the FXML file cannot be found.
+     */
+    public void remindPassword(ActionEvent event) throws IOException {
+        this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/forget_password.fxml")));
+        stage = StageUtils.modifyStage(stage, new Scene(root));
+        stage.show();
+    }
+
+    /** This method is called when the user clicks the "reset password" button. It switches to the "reset password" page.
+     *
+     * @param event The event that is triggered when the login button is clicked.
+     * @throws IOException Throws an IOException if the FXML file cannot be found.
+     */
+    public void switchResetPassword(ActionEvent event) throws IOException {
+        this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/reset_password.fxml")));
+        stage = StageUtils.modifyStage(stage, new Scene(root));
+        stage.show();
+    }
+
+    /** This method is called when the user clicks the "reset password" button. It switches to the "reset password" page.
+     *
+     * @param event The event that is triggered when the login button is clicked.
+     * @throws IOException Throws an IOException if the FXML file cannot be found.
+     */
+    public void resetPassword(ActionEvent event) throws IOException {
+        String username = usernameField.getText();
+        JSONObject jsonObject = new JSONObject();
+
+        if (username.isEmpty()) {
+            errorLabel.setText("Please enter your username.");
+            return;
+        }
+
+        try {
+            jsonObject.put("username", username);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            errorLabel.setText("Error: " + e.getMessage());
+            return;
+        }
+
+        try {
+            JSONObject obj = RequestHandler.getRequestHandler().postRequest(jsonObject, "auth/request-password-reset");
+            boolean status = obj.getBoolean("status");
+
+            if (status) {
+                switchResetPassword(event);
+            } else {
+                String message = obj.getString("message");
+                errorLabel.setText(message);
+            }
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+            errorLabel.setText("Failed to send e-mail to your account.");
+        }
+    }
+
     /** This method is called when the login button is clicked. It send a request to the server to check if the
      * username and password are correct. If they are, it switches to the home page. If not, it displays an error message.
      *

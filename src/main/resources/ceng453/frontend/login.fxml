@@ -6,12 +6,29 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="600.0" styleClass="panel-primary" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ceng453.frontend.controllers.LoginController">
    <children>
       <VBox alignment="CENTER" fillWidth="false" spacing="12" styleClass="back" stylesheets="@style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
+            <HBox alignment="CENTER" prefHeight="41.0" prefWidth="323.0" spacing="48.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#remindPassword" text="Remind Password">
+                     <styleClass>
+                        <String fx:value="btn" />
+                        <String fx:value="btn-secondary" />
+                     </styleClass>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#resetPassword" text="Reset Password">
+                     <styleClass>
+                        <String fx:value="btn" />
+                        <String fx:value="btn-secondary" />
+                     </styleClass>
+                  </Button>
+               </children>
+            </HBox>
             <Label styleClass="form-label" text="Username" />
             <TextField fx:id="usernameField" styleClass="form-control" />
             <Label styleClass="form-label" text="Password" />
