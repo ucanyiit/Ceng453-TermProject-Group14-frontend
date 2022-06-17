@@ -12,16 +12,32 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Properties;
 
 public class RequestHandler {
-    private static final String URL = "http://localhost:8080/api/";
+    private static final String URL = getServerUrl();
     private String token = "";
+
 
     private static final class InstanceHolder {
         private static final RequestHandler instance = new RequestHandler();
+    }
+
+    private static String getServerUrl() {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        Properties properties = new Properties();
+        try (InputStream resourceStream = loader.getResourceAsStream("application.properties")) {
+            properties.load(resourceStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return properties.getProperty("server.address");
     }
 
     /** get the instance of the class
