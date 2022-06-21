@@ -150,10 +150,16 @@ public class BoardController implements Initializable {
             setBoardWithGameDTO(response);
             JSONArray players = response.getJSONArray("players");
             updatePlayerCircles(players, null);
-            if (checkTurnOrder(players, response.getInt("turn")) && playerService.getState().equals(PlayerState.DONE)) {
+            boolean playerTurn = checkTurnOrder(players, response.getInt("turn"));
+            if (playerTurn && !playerService.getState().equals(PlayerState.DONE)) {
                 playerService.setState(PlayerState.PLAYING);
                 turnAdvanceButton.setDisable(false);
                 turnAdvanceButton.setText("Roll Dice");
+                turnAdvanceLabel.setText("Your turn!");
+                errorLabel.setText("");
+            } else if (!playerTurn) {
+                turnAdvanceLabel.setText("Waiting for other players");
+                errorLabel.setText("");
             }
         } catch (JSONException e) {
             e.printStackTrace();
