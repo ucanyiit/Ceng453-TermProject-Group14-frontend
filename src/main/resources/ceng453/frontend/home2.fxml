@@ -6,6 +6,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ceng453.frontend.controllers.Home2Controller">
@@ -20,11 +21,22 @@
                   <Insets bottom="48.0" />
                </VBox.margin>
             </ImageView>
-            <Button mnemonicParsing="false" onAction="#switchToBoard" text="Play">
-               <styleClass>
-                  <String fx:value="btn" />
-                  <String fx:value="btn-primary" />
-               </styleClass></Button>
+            <HBox alignment="CENTER" prefHeight="47.0" prefWidth="600.0" spacing="20.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#switchToBoard" text="Single Player">
+                     <styleClass>
+                        <String fx:value="btn" />
+                        <String fx:value="btn-primary" />
+                     </styleClass>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#switchToMultiBoard" text="Multiplayer">
+                     <styleClass>
+                        <String fx:value="btn" />
+                        <String fx:value="btn-primary" />
+                     </styleClass>
+                  </Button>
+               </children>
+            </HBox>
             <Button mnemonicParsing="false" onAction="#switchToInstructions" text="Instructions">
                <styleClass>
                   <String fx:value="btn" />

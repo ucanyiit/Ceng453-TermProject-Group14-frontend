@@ -62,9 +62,30 @@ public class Home2Controller {
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ceng453/frontend/board.fxml"));
+        BoardController boardController = new BoardController();
+        loader.setController(boardController);
+        boardController.initData("SINGLEPLAYER");
         Parent root = loader.load();
         stage = StageUtils.modifyStage(stage, new Scene(root));
         stage.show();
-        ((BoardController) loader.getController()).setStage(stage);
+        boardController.setStage(stage);
+    }
+
+    /** This method is called when the user clicks the "Play" button. It switches the scene to the board scene.
+     *
+     * @param event The event that triggers the method.
+     * @throws IOException Throws an exception if the fxml file cannot be found.
+     */
+    public void switchToMultiBoard(ActionEvent event) throws IOException {
+        this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ceng453/frontend/board.fxml"));
+        BoardController boardController = new BoardController();
+        loader.setController(boardController);
+        boardController.initData("MULTIPLAYER");
+        Parent root = loader.load();
+        stage = StageUtils.modifyStage(stage, new Scene(root));
+        stage.show();
+        boardController.setStage(stage);
     }
 }

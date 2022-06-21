@@ -45,6 +45,8 @@ public class BoardController implements Initializable {
 
     private Stage stage;
 
+    private String gameType;
+
     @FXML
     private Label errorLabel;
     @FXML
@@ -209,10 +211,9 @@ public class BoardController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("type", "SINGLEPLAYER");
+            jsonObject.put("type", this.gameType);
         } catch (JSONException e) {
             e.printStackTrace();
             errorLabel.setText("Error: " + e.getMessage());
@@ -237,8 +238,9 @@ public class BoardController implements Initializable {
             e.printStackTrace();
             errorLabel.setText("Failed to create game.");
         }
-
-        startTimer();
+        if (this.gameType.equals("MULTIPLAYER")) {
+            startTimer();
+        }
     }
 
     public void setStage(Stage stage) {
@@ -381,6 +383,10 @@ public class BoardController implements Initializable {
             JSONObject obj = RequestHandler.getRequestHandler().getRequest(params, "game/resign");
             boolean status = obj.getBoolean("status");
 
+            if (this.timer != null) {
+                this.timer.cancel();
+            }
+
             if (status) {
                 playerService.setState(PlayerState.GAME_OVER);
                 errorLabel.setText("Game is finished.");
@@ -493,5 +499,9 @@ public class BoardController implements Initializable {
             botActionLabel.setText(botAction);
             botActionLabel.setVisible(true);
         }
+    }
+
+    public void initData(String gameType) {
+        this.gameType = gameType;
     }
 }
