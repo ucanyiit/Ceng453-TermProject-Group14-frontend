@@ -71,7 +71,7 @@ public class BoardController implements Initializable {
     private List<Circle> playerCircles = new ArrayList<>();
     private List<VBox> tileBoxes = new ArrayList<>();
     private Timer timer;
-    private long TIME_INTERVAL_FOR_POLLING = 1000;
+    private long TIME_INTERVAL_FOR_POLLING = 3000;
     private long TIME_DELAY_FOR_POLLING = 0;
 
     private static final List<Pair<Integer, Integer>> LOCATION_TO_INDEXES = List.of(
@@ -149,7 +149,6 @@ public class BoardController implements Initializable {
             setBoardWithGameDTO(response);
             JSONArray players = response.getJSONArray("players");
             updatePlayerCircles(players, null);
-            playerService.setState(PlayerState.PLAYING);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -275,20 +274,38 @@ public class BoardController implements Initializable {
         errorLabel.setText("");
         setBotActionList(null);
         PlayerState state = playerService.getState();
-        if (state == PlayerState.GAME_OVER) {
-            this.switchToHome2(event);
-        } else if (state == PlayerState.PLAYING) {
-            this.rollDice(event);
-        } else if (state == PlayerState.WAITING) {
-            String selectedAction = actionsList.getSelectionModel().getSelectedItem();
-            this.takeAction(event, selectedAction);
-            turnAdvanceLabel.setText("You have played your turn.");
-        } else if (state == PlayerState.DONE) {
-            this.nextTurn(event);
-            turnAdvanceLabel.setText("The bot has played their turn.");
+        if (this.gameType == "SINGLEPLAYER") {
+            if (state == PlayerState.GAME_OVER) {
+                this.switchToHome2(event);
+            } else if (state == PlayerState.PLAYING) {
+                this.rollDice(event);
+            } else if (state == PlayerState.WAITING) {
+                String selectedAction = actionsList.getSelectionModel().getSelectedItem();
+                this.takeAction(event, selectedAction);
+                turnAdvanceLabel.setText("You have played your turn.");
+            } else if (state == PlayerState.DONE) {
+                this.nextTurn(event);
+                turnAdvanceLabel.setText("The bot has played their turn.");
+            } else {
+                errorLabel.setText("Game is not in a valid state.");
+            }
         } else {
-            errorLabel.setText("Game is not in a valid state.");
+            if (state == PlayerState.GAME_OVER) {
+                this.switchToHome2(event);
+            } else if (state == PlayerState.PLAYING) {
+                this.rollDice(event);
+            } else if (state == PlayerState.WAITING) {
+                String selectedAction = actionsList.getSelectionModel().getSelectedItem();
+                this.takeAction(event, selectedAction);
+                turnAdvanceLabel.setText("You have played your turn.");
+            } else if (state == PlayerState.DONE) {
+                this.nextTurn(event);
+                turnAdvanceLabel.setText("The bot has played their turn.");
+            } else {
+                errorLabel.setText("Game is not in a valid state.");
+            }
         }
+
     }
 
     /** This method is called when the user clicks the turn advance button. It sends a request to the server.
@@ -419,7 +436,11 @@ public class BoardController implements Initializable {
 
     private void updatePlayerCircle(Integer location, Integer orderOfPlay) {
         Pair<Integer, Integer> tileIndex = LOCATION_TO_INDEXES.get(location);
-        Circle circle = playerCircles.get(orderOfPlay);
+        Circle circle = playerCircles.size() > orderOfPlay ? playerCircles.get(orderOfPlay) : null;
+        if (circle == null) {
+            addPlayerCircle(location, orderOfPlay);
+            return;
+        }
         double offset = 0.2 + orderOfPlay / 10.;
 
         circle.centerXProperty().unbind();
