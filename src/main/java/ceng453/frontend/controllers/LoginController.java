@@ -43,11 +43,13 @@ public class LoginController {
      * @param event The event that is triggered when the login button is clicked.
      * @throws IOException Throws an IOException if the FXML file cannot be found.
      */
-    public void switchToHome2(ActionEvent event) throws IOException {
+    public void switchToHome2(ActionEvent event, String username) throws IOException {
         this.stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/ceng453/frontend/home2.fxml")));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ceng453/frontend/home2.fxml"));
+        Parent root = loader.load();
         stage = StageUtils.modifyStage(stage, new Scene(root));
         stage.show();
+        ((Home2Controller) loader.getController()).initData(username);
     }
 
     /** This method is called when the user clicks the "remind password" button. It switches to the "remind password" page.
@@ -139,7 +141,7 @@ public class LoginController {
             if (status) {
                 String token = obj.getString("message");
                 RequestHandler.getRequestHandler().setToken(token);
-                switchToHome2(event);
+                switchToHome2(event, username);
             } else {
                 String message = obj.getString("message");
                 errorLabel.setText(message);

@@ -46,6 +46,7 @@ public class BoardController implements Initializable {
     private Stage stage;
 
     private String gameType;
+    private String username;
 
     @FXML
     private Label errorLabel;
@@ -149,6 +150,9 @@ public class BoardController implements Initializable {
             setBoardWithGameDTO(response);
             JSONArray players = response.getJSONArray("players");
             updatePlayerCircles(players, null);
+            if (checkTurnOrder(players, response.getInt("turn")) && playerService.getState().equals(PlayerState.DONE)) {
+                playerService.setState(PlayerState.PLAYING);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -175,6 +179,20 @@ public class BoardController implements Initializable {
         if (players.getJSONObject(0).getInt("money") < 0) {
             this.resign(event);
         }
+    }
+
+    private boolean checkTurnOrder(JSONArray players, int turnOrder) throws JSONException {
+        for (int i = 0; i < players.length(); i++) {
+            JSONObject player = players.getJSONObject(i);
+            updatePlayerCircle(player.getInt("location"), player.getInt("orderOfPlay"));
+            playersList.getItems().add(getPlayerDesc(i, player));
+
+            if (player.getString("username").equals(this.username)) {
+                return i == turnOrder;
+            }
+        }
+
+        return false;
     }
 
     private void setBoardWithGameDTO(JSONObject response) throws JSONException {
@@ -490,7 +508,11 @@ public class BoardController implements Initializable {
                 JSONObject response = obj.getJSONObject("response");
                 setBoardWithGameDTO(response);
                 JSONArray players = response.getJSONArray("players");
-                turnAdvanceButton.setText("Next Turn");
+                if (gameType.equals("SINGLEPLAYER")) {
+                    turnAdvanceButton.setText("Next Turn");
+                } else {
+                    turnAdvanceButton.setDisable(true);
+                }
                 playerService.setState(PlayerState.DONE);
                 updatePlayerCircles(players, event);
                 setTakeActionsList(null);
@@ -525,7 +547,8 @@ public class BoardController implements Initializable {
         }
     }
 
-    public void initData(String gameType) {
+    public void initData(String gameType, String username) {
         this.gameType = gameType;
+        this.username = username;
     }
 }

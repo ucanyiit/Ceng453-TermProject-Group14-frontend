@@ -16,6 +16,8 @@ public class Home2Controller {
 
     private Stage stage;
 
+    private String username;
+
     /** This method is called when the user clicks the "Logout" button. It logs the user out and opens the home1 page.
      *
      * @param event The event that triggers the method.
@@ -64,7 +66,7 @@ public class Home2Controller {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ceng453/frontend/board.fxml"));
         BoardController boardController = new BoardController();
         loader.setController(boardController);
-        boardController.initData("SINGLEPLAYER");
+        boardController.initData("SINGLEPLAYER", this.username);
         Parent root = loader.load();
         stage = StageUtils.modifyStage(stage, new Scene(root));
         stage.show();
@@ -82,10 +84,14 @@ public class Home2Controller {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ceng453/frontend/board.fxml"));
         BoardController boardController = new BoardController();
         loader.setController(boardController);
-        boardController.initData("MULTIPLAYER");
+        boardController.initData("MULTIPLAYER", this.username);
         Parent root = loader.load();
         stage = StageUtils.modifyStage(stage, new Scene(root));
         stage.show();
         boardController.setStage(stage);
+    }
+
+    public void initData(String username){
+        this.username = username;
     }
 }
