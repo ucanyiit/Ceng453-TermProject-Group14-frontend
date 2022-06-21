@@ -148,7 +148,7 @@ public class BoardController implements Initializable {
             response = response.getJSONObject("response");
             setBoardWithGameDTO(response);
             JSONArray players = response.getJSONArray("players");
-            setPlayerCircles(players);
+            updatePlayerCircles(players, null);
             playerService.setState(PlayerState.PLAYING);
         } catch (JSONException e) {
             e.printStackTrace();
