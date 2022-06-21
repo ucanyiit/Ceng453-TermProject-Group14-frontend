@@ -4,6 +4,7 @@ import ceng453.frontend.enums.PlayerState;
 import ceng453.frontend.services.PlayerService;
 import ceng453.frontend.utils.RequestHandler;
 import ceng453.frontend.utils.StageUtils;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -67,6 +68,9 @@ public class BoardController implements Initializable {
     private String gameId;
     private List<Circle> playerCircles = new ArrayList<>();
     private List<VBox> tileBoxes = new ArrayList<>();
+    private Timer timer;
+    private long TIME_INTERVAL_FOR_POLLING = 1000;
+    private long TIME_DELAY_FOR_POLLING = 0;
 
     private static final List<Pair<Integer, Integer>> LOCATION_TO_INDEXES = List.of(
             new Pair<>(0, 4),
@@ -95,6 +99,56 @@ public class BoardController implements Initializable {
                 + ": " + player.getString("username")
                 + ", money:" + player.getInt("money")
                 + ", jail:" + player.getInt("jailDuration");
+    }
+
+    private void startTimer() {
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    try {
+                        updateBoard();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        }, TIME_DELAY_FOR_POLLING, TIME_INTERVAL_FOR_POLLING); // 1 second
+    }
+
+    private void updateBoard() throws IOException {
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("gameId", gameId));
+        JSONObject response = null;
+        try {
+            response = RequestHandler.getRequestHandler().getRequest(params, "game/get-game");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (response == null) {
+            System.out.println("Response is null at time " + new Date());
+            return;
+        }
+
+        try {
+            boolean status = response.getBoolean("status");
+            if (!status) {
+                errorLabel.setText(response.getString("message"));
+                return;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            response = response.getJSONObject("response");
+            setBoardWithGameDTO(response);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void setPlayerCircles(JSONArray players) throws JSONException {
@@ -183,6 +237,8 @@ public class BoardController implements Initializable {
             e.printStackTrace();
             errorLabel.setText("Failed to create game.");
         }
+
+        startTimer();
     }
 
     public void setStage(Stage stage) {
