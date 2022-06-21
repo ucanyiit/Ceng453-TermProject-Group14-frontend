@@ -152,6 +152,8 @@ public class BoardController implements Initializable {
             updatePlayerCircles(players, null);
             if (checkTurnOrder(players, response.getInt("turn")) && playerService.getState().equals(PlayerState.DONE)) {
                 playerService.setState(PlayerState.PLAYING);
+                turnAdvanceButton.setDisable(false);
+                turnAdvanceButton.setText("Roll Dice");
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -429,6 +431,7 @@ public class BoardController implements Initializable {
                 playerService.setState(PlayerState.GAME_OVER);
                 errorLabel.setText("Game is finished.");
                 turnAdvanceButton.setText("Go Back To Main Menu");
+                turnAdvanceButton.setDisable(false);
                 resignButton.setVisible(false);
             } else {
                 String message = obj.getString("message");
