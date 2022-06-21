@@ -117,10 +117,10 @@ public class BoardController implements Initializable {
                     }
                 });
             }
-        }, TIME_DELAY_FOR_POLLING, TIME_INTERVAL_FOR_POLLING); // 1 second
+        }, TIME_DELAY_FOR_POLLING, TIME_INTERVAL_FOR_POLLING);
     }
 
-    private void updateBoard() throws IOException {
+    private void updateBoard() {
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("gameId", gameId));
         JSONObject response = null;
@@ -186,9 +186,6 @@ public class BoardController implements Initializable {
     private boolean checkTurnOrder(JSONArray players, int turnOrder) throws JSONException {
         for (int i = 0; i < players.length(); i++) {
             JSONObject player = players.getJSONObject(i);
-            updatePlayerCircle(player.getInt("location"), player.getInt("orderOfPlay"));
-            playersList.getItems().add(getPlayerDesc(i, player));
-
             if (player.getString("username").equals(this.username)) {
                 return i == turnOrder;
             }
